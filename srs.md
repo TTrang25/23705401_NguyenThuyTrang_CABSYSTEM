@@ -131,3 +131,270 @@ Bước 3: Chuyển đổi các yêu cầu thành mã BG
 | **BG14** | Xây dựng kiến trúc linh hoạt để dễ dàng bổ sung dịch vụ, phương thức thanh toán và nhà cung cấp mới.                         | Thêm loại dịch vụ, phương thức thanh toán, nhà cung cấp thông báo mà không phải xây dựng lại toàn bộ hệ thống. |
 | **BG15** | Làm rõ các chính sách và quy tắc nghiệp vụ trước khi triển khai hệ thống.                                                    | Làm rõ cách tính cước, ưu tiên tài xế, thời gian phản hồi, hủy chuyến, mất mạng và thời gian lưu trữ dữ liệu.  |
 | **BG16** | Cho phép triển khai và phát triển từng phần nhằm hạn chế ảnh hưởng đến các chức năng đang hoạt động.                         | Các thành phần độc lập, triển khai từng phần, dễ bảo trì và mở rộng.                                           |
+Bước 4: Giới hạn các module thực hiện
+| Mã      | Module                             | Phạm vi chính                                                                                                     |
+| ------- | ---------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| **M01** | **Quản lý tài khoản & người dùng** | Đăng ký, đăng nhập, cập nhật thông tin khách hàng/tài xế, xác thực tài khoản                                      |
+| **M02** | **Quản lý tài xế & phương tiện**   | Hồ sơ tài xế, thông tin phương tiện, trạng thái hoạt động, trạng thái sẵn sàng nhận chuyến                        |
+| **M03** | **Đặt xe**                         | Nhập điểm đón, điểm đến, chọn loại xe, tạo và hủy yêu cầu đặt xe                                                  |
+| **M04** | **Tìm kiếm & phân công tài xế**    | Tìm tài xế phù hợp dựa trên vị trí/trạng thái, ưu tiên tài xế gần, xử lý từ chối/không phản hồi                   |
+| **M05** | **Quản lý & theo dõi chuyến đi**   | Cập nhật trạng thái chuyến, vị trí tài xế, ETA, theo dõi chuyến theo thời gian thực                               |
+| **M06** | **Tính cước & thanh toán**         | Tính tiền chuyến đi, thanh toán tiền mặt, thanh toán điện tử qua nhà cung cấp bên ngoài, xử lý giao dịch thất bại |
+| **M07** | **Thông báo**                      | Thông báo đặt xe, tài xế nhận chuyến, tài xế đến, hoàn thành chuyến, kết quả thanh toán                           |
+| **M08** | **Lịch sử & đánh giá**             | Xem lịch sử chuyến, số tiền đã trả, đánh giá tài xế sau chuyến                                                    |
+| **M09** | **Quản lý vận hành**               | Quản lý khách hàng, tài xế, phương tiện, chuyến đi; giám sát chuyến đang diễn ra và xử lý sự cố                   |
+| **M10** | **Báo cáo & thống kê**             | Số lượng chuyến, doanh thu, tỷ lệ hoàn thành, tỷ lệ hủy, hiệu quả tài xế                                          |
+| **M11** | **Phân quyền & bảo mật**           | Xác thực, phân quyền nhân viên, bảo vệ dữ liệu cá nhân/vị trí/giao dịch, audit log                                |
+| **M12** | **Tích hợp hệ thống bên ngoài**    | Payment Provider, Map/GPS Provider và Notification Provider                                                       |
+Bước 5: Hãy xác định các Business Requirements (yêu cầu nghiệp vụ) của hệ thống và thiết kế các yêu cầu tương ứng. Mỗi Business Requirement được mã hóa theo dạng BR01, BR02, 
+| Mã BR | Business Requirement / Yêu cầu | Mô tả yêu cầu |
+| --- | --- | --- |
+| BR01 | Đặt xe | Hệ thống phải cho phép khách hàng tạo chuyến đi bằng cách cung cấp điểm đón, điểm đến và loại xe/dịch vụ. |
+| BR02 | Quản lý tài khoản khách hàng | Hệ thống phải cho phép khách hàng đăng ký, đăng nhập và cập nhật thông tin cá nhân. |
+| BR03 | Tìm kiếm tài xế | Hệ thống phải tự động xác định và tìm kiếm tài xế phù hợp dựa trên vị trí, trạng thái sẵn sàng và các tiêu chí vận hành. |
+| BR04 | Phân công tài xế | Hệ thống phải ưu tiên và gửi yêu cầu chuyến đi đến tài xế phù hợp, đặc biệt là tài xế ở gần khách hàng. |
+| BR05 | Xử lý tài xế từ chối/không phản hồi | Hệ thống phải tự động tiếp tục tìm tài xế khác khi tài xế được đề xuất từ chối hoặc không phản hồi trong thời gian quy định. |
+| BR06 | Thông báo kết quả tìm tài xế | Hệ thống phải thông báo cho khách hàng khi tìm được tài xế hoặc không tìm được tài xế. |
+| BR07 | Theo dõi chuyến đi | Hệ thống phải cho phép khách hàng theo dõi trạng thái chuyến đi và vị trí tài xế. |
+| BR08 | Quản lý trạng thái chuyến | Hệ thống phải cho phép tài xế cập nhật các trạng thái đã đến điểm đón, đã đón khách, đang di chuyển và hoàn thành chuyến. |
+| BR09 | Quản lý vị trí tài xế | Hệ thống phải ghi nhận vị trí của tài xế để hỗ trợ tìm tài xế và dự kiến thời gian đến (ETA). |
+| BR10 | Quản lý tài xế | Hệ thống phải cho phép tài xế đăng ký/được tạo tài khoản, cập nhật hồ sơ và trạng thái hoạt động. |
+| BR11 | Quản lý phương tiện | Hệ thống phải cho phép quản lý thông tin phương tiện của tài xế. |
+| BR12 | Tính cước | Hệ thống phải tính số tiền khách hàng phải trả dựa trên loại dịch vụ và thông tin chuyến đi. |
+| BR13 | Thanh toán | Hệ thống phải hỗ trợ khách hàng thanh toán bằng tiền mặt hoặc phương thức điện tử. |
+| BR14 | Tích hợp thanh toán | Hệ thống phải tích hợp với nhà cung cấp thanh toán bên ngoài và không lưu trực tiếp thông tin nhạy cảm của thẻ/tài khoản. |
+| BR15 | Xử lý thanh toán thất bại | Hệ thống phải thông báo khi thanh toán điện tử thất bại và cho phép xử lý lại theo chính sách doanh nghiệp. |
+| BR16 | Thông báo | Hệ thống phải gửi thông báo cho khách hàng và tài xế về các sự kiện quan trọng của chuyến đi. |
+| BR17 | Lịch sử chuyến đi | Hệ thống phải cho phép khách hàng xem lịch sử chuyến đi và số tiền đã thanh toán. |
+| BR18 | Đánh giá tài xế | Hệ thống phải cho phép khách hàng đánh giá tài xế sau khi chuyến đi hoàn thành. |
+| BR19 | Quản lý vận hành | Hệ thống phải cung cấp giao diện để nhân viên vận hành quản lý khách hàng, tài xế, phương tiện và chuyến đi. |
+| BR20 | Giám sát chuyến đi | Hệ thống phải cho phép nhân viên vận hành xem các chuyến đang diễn ra và trạng thái tài xế. |
+| BR21 | Xử lý sự cố | Hệ thống phải hỗ trợ nhân viên vận hành tra cứu và xử lý các trường hợp chuyến đi bị lỗi. |
+| BR22 | Quản lý giao dịch | Hệ thống phải cho phép nhân viên vận hành tra cứu lịch sử giao dịch và thanh toán. |
+| BR23 | Báo cáo | Hệ thống phải cung cấp báo cáo về số lượng chuyến, doanh thu, tỷ lệ hoàn thành, tỷ lệ hủy và hiệu quả tài xế. |
+| BR24 | Phân quyền | Hệ thống phải kiểm soát quyền truy cập để nhân viên chỉ thực hiện được các chức năng được cấp quyền. |
+| BR25 | Bảo mật dữ liệu | Hệ thống phải bảo vệ thông tin cá nhân, thông tin phương tiện, dữ liệu vị trí và dữ liệu giao dịch. |
+| BR26 | Lưu vết | Hệ thống phải ghi nhận các thao tác quan trọng để phục vụ kiểm tra và truy vết khi có sự cố. |
+| BR27 | Khả năng mở rộng | Hệ thống phải cho phép mở rộng độc lập các thành phần khi số lượng khách hàng và tài xế tăng. |
+| BR28 | Khả năng tích hợp | Hệ thống phải cho phép bổ sung nhà cung cấp thanh toán, thông báo hoặc các dịch vụ bên ngoài mà không phải xây dựng lại toàn bộ hệ thống. |
+| BR29 | Khả năng mở rộng dịch vụ | Hệ thống phải cho phép doanh nghiệp bổ sung các loại dịch vụ đặt xe mới trong tương lai. |
+| BR30 | Triển khai từng phần | Hệ thống phải hỗ trợ triển khai chức năng mới từng phần, hạn chế ảnh hưởng đến các chức năng đang hoạt động. |
+
+BR01 – Tạo chuyến đi
+
+Business Requirement:
+Doanh nghiệp cần cung cấp cho khách hàng khả năng đặt xe trực tuyến một cách nhanh chóng và thuận tiện.
+
+Requirement BR01:
+
+Hệ thống phải cho phép khách hàng tạo chuyến đi bằng cách cung cấp điểm đón, điểm đến và lựa chọn loại xe/dịch vụ.
+
+Thông tin đầu vào:
+
+Điểm đón
+Điểm đến
+Loại xe/dịch vụ
+
+Kết quả:
+
+Hệ thống tạo yêu cầu chuyến đi.
+Chuyển yêu cầu sang chức năng tìm kiếm tài xế.
+Thông báo trạng thái yêu cầu cho khách hàng.
+BR03 – Tìm tài xế
+
+Hệ thống phải tự động tìm kiếm tài xế phù hợp dựa trên vị trí của khách hàng, trạng thái sẵn sàng và các tiêu chí vận hành.
+
+BR04 – Phân công tài xế
+
+Hệ thống phải ưu tiên tài xế phù hợp và gần khách hàng, sau đó gửi yêu cầu nhận chuyến đến tài xế.
+
+BR05 – Tài xế không nhận chuyến
+
+Hệ thống phải tự động tìm tài xế khác nếu tài xế được đề xuất từ chối hoặc không phản hồi trong thời gian quy định, mà không yêu cầu khách hàng tạo lại chuyến đi.
+
+Chuỗi yêu cầu nghiệp vụ quan trọng nhất
+flowchart LR
+    BR["Business Requirement<br/>Nhu cầu doanh nghiệp"]
+    
+    BRR01["BR01<br/>Tạo chuyến đi"]
+    BR03["BR03<br/>Tìm tài xế"]
+    BR04["BR04<br/>Phân công tài xế"]
+    BR05["BR05<br/>Xử lý từ chối / không phản hồi"]
+    BR07["BR07<br/>Theo dõi chuyến"]
+    BR12["BR12<br/>Tính cước"]
+    BR13["BR13<br/>Thanh toán"]
+    BR16["BR16<br/>Thông báo"]
+    BR18["BR18<br/>Đánh giá"]
+    
+    BR --> BR01
+    BR01 --> BR03
+    BR03 --> BR04
+    BR04 --> BR05
+    BR05 --> BR07
+    BR07 --> BR12
+    BR12 --> BR13
+    BR13 --> BR16
+    BR07 --> BR16
+    BR07 --> BR18
+Bước 6: Xác định các yêu cầu nghiệp vụ (Business Requirements) của hệ thống CAB, chuyển đổi các yêu cầu thành các Requirement có mã VR01, VR02,... và xác định các tác nhân, dịch vụ/chức năng tương ứng để xây dựng mô hình Use Case của hệ thống.
+Các Actor chính của CAB
+
+Có 3 Actor chính theo đề bài:
+
+Khách hàng (Customer)
+Tài xế (Driver)
+Nhân viên vận hành (Operations Staff)
+
+Ngoài ra có các hệ thống bên ngoài:
+
+Payment Provider – Nhà cung cấp thanh toán
+Map/GPS Provider – Nhà cung cấp bản đồ/GPS
+Notification Provider – Nhà cung cấp thông báo
+1. Khách hàng
+| Mã       | Dịch vụ / Use Case của khách hàng |
+| -------- | --------------------------------- |
+| **UC01** | Đăng ký tài khoản                 |
+| **UC02** | Đăng nhập                         |
+| **UC03** | Cập nhật thông tin cá nhân        |
+| **UC04** | Tạo chuyến đi                     |
+| **UC05** | Theo dõi chuyến đi                |
+| **UC06** | Hủy chuyến                        |
+| **UC07** | Xem lịch sử chuyến đi             |
+| **UC08** | Xem cước phí                      |
+| **UC09** | Thanh toán chuyến đi              |
+| **UC10** | Xem kết quả thanh toán            |
+| **UC11** | Đánh giá tài xế                   |
+2. Tài xế
+| Mã       | Dịch vụ / Use Case             |
+| -------- | ------------------------------ |
+| **UC13** | Đăng ký tài khoản              |
+| **UC14** | Cập nhật hồ sơ                 |
+| **UC15** | Cập nhật thông tin phương tiện |
+| **UC16** | Chuyển trạng thái sẵn sàng     |
+| **UC17** | Nhận thông báo chuyến mới      |
+| **UC18** | Chấp nhận chuyến               |
+| **UC19** | Từ chối chuyến                 |
+| **UC20** | Cập nhật trạng thái chuyến     |
+| **UC21** | Cập nhật vị trí                |
+| **UC22** | Hoàn thành chuyến              |
+3. Nhân viên vận hành
+| Mã       | Dịch vụ / Use Case              |
+| -------- | ------------------------------- |
+| **UC23** | Quản lý khách hàng              |
+| **UC24** | Quản lý tài xế                  |
+| **UC25** | Quản lý phương tiện             |
+| **UC26** | Quản lý chuyến đi               |
+| **UC27** | Giám sát chuyến đang diễn ra    |
+| **UC28** | Kiểm tra trạng thái tài xế      |
+| **UC29** | Xử lý sự cố chuyến đi           |
+| **UC30** | Tra cứu giao dịch               |
+| **UC31** | Xem báo cáo thống kê            |
+| **UC32** | Quản lý tài khoản và phân quyền |
+4. Hệ thống bên ngoài
+Payment Provider
+Xử lý thanh toán điện tử
+Trả kết quả giao dịch
+Xử lý giao dịch thất bại
+Map/GPS Provider
+Xác định vị trí
+Hỗ trợ khoảng cách
+Hỗ trợ ETA
+Notification Provider
+Gửi Push Notification
+Gửi SMS
+Gửi Email
+ví dụ: 
+Ví dụ:
+
+Nhu cầu doanh nghiệp:
+
+Doanh nghiệp muốn khách hàng có thể đặt xe trực tuyến.
+
+↓
+
+BR01:
+
+Hệ thống phải cho phép khách hàng tạo chuyến đi bằng cách cung cấp điểm đón, điểm đến và lựa chọn loại xe.
+
+↓
+
+Use Case:
+
+UC04 – Tạo chuyến đi
+
+↓
+
+Actor:
+
+Khách hàng
+
+↓
+
+Sau đó mới vẽ Use Case Diagram.
+flowchart LR
+
+    Customer["Khách hàng"]
+    Driver["Tài xế"]
+    Staff["Nhân viên vận hành"]
+
+    CAB(("HỆ THỐNG CAB"))
+
+    subgraph CustomerUC["Dịch vụ dành cho khách hàng"]
+        UC01["Đăng ký / Đăng nhập"]
+        UC02["Cập nhật thông tin"]
+        UC03["Tạo chuyến đi"]
+        UC04["Theo dõi chuyến đi"]
+        UC05["Hủy chuyến"]
+        UC06["Xem lịch sử chuyến"]
+        UC07["Thanh toán"]
+        UC08["Đánh giá tài xế"]
+    end
+
+    subgraph DriverUC["Dịch vụ dành cho tài xế"]
+        UC09["Quản lý hồ sơ"]
+        UC10["Quản lý phương tiện"]
+        UC11["Cập nhật trạng thái sẵn sàng"]
+        UC12["Nhận chuyến"]
+        UC13["Chấp nhận / Từ chối chuyến"]
+        UC14["Cập nhật trạng thái chuyến"]
+        UC15["Cập nhật vị trí"]
+    end
+
+    subgraph StaffUC["Dịch vụ dành cho nhân viên vận hành"]
+        UC16["Quản lý khách hàng"]
+        UC17["Quản lý tài xế"]
+        UC18["Quản lý phương tiện"]
+        UC19["Quản lý chuyến đi"]
+        UC20["Giám sát chuyến"]
+        UC21["Xử lý sự cố"]
+        UC22["Tra cứu giao dịch"]
+        UC23["Báo cáo thống kê"]
+        UC24["Phân quyền"]
+    end
+
+    Customer --> UC01
+    Customer --> UC02
+    Customer --> UC03
+    Customer --> UC04
+    Customer --> UC05
+    Customer --> UC06
+    Customer --> UC07
+    Customer --> UC08
+
+    Driver --> UC09
+    Driver --> UC10
+    Driver --> UC11
+    Driver --> UC12
+    Driver --> UC13
+    Driver --> UC14
+    Driver --> UC15
+
+    Staff --> UC16
+    Staff --> UC17
+    Staff --> UC18
+    Staff --> UC19
+    Staff --> UC20
+    Staff --> UC21
+    Staff --> UC22
+    Staff --> UC23
+    Staff --> UC24
