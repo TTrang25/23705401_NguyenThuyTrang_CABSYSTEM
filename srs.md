@@ -114,7 +114,6 @@ Map/GPS Provider
 → Theo dõi chất lượng dịch vụ và khả năng tích hợp, không cần tham gia sâu vào quá trình ra quyết định nghiệp vụ.
 Bước 3: Chuyển đổi các yêu cầu thành mã BG
 | Mã BG    | Mục tiêu nghiệp vụ                                                                                                           | Yêu cầu liên quan                                                                                              |
-| -------- | ---------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
 | **BG01** | Xây dựng nền tảng đặt xe trực tuyến có khả năng phục vụ số lượng lớn khách hàng và tài xế.                                   | Hệ thống phải có khả năng mở rộng và phục vụ lượng người dùng lớn.                                             |
 | **BG02** | **Tự động hóa quy trình đặt và phân công xe** nhằm giảm sự phụ thuộc vào thao tác thủ công của nhân viên vận hành.           | Khách hàng gửi yêu cầu đặt xe; hệ thống tự động tìm và phân công tài xế.                                       |
 | **BG03** | Cải thiện trải nghiệm khách hàng bằng cách cung cấp khả năng **theo dõi trạng thái chuyến đi theo thời gian thực**.          | Theo dõi tìm tài xế, tài xế nhận chuyến, ETA, tài xế đến, đón khách, di chuyển, hoàn thành.                    |
@@ -130,10 +129,10 @@ Bước 3: Chuyển đổi các yêu cầu thành mã BG
 | **BG13** | Đảm bảo khả năng kiểm tra, truy vết các hoạt động quan trọng khi xảy ra sự cố.                                               | Lưu vết các thao tác quan trọng và lịch sử giao dịch.                                                          |
 | **BG14** | Xây dựng kiến trúc linh hoạt để dễ dàng bổ sung dịch vụ, phương thức thanh toán và nhà cung cấp mới.                         | Thêm loại dịch vụ, phương thức thanh toán, nhà cung cấp thông báo mà không phải xây dựng lại toàn bộ hệ thống. |
 | **BG15** | Làm rõ các chính sách và quy tắc nghiệp vụ trước khi triển khai hệ thống.                                                    | Làm rõ cách tính cước, ưu tiên tài xế, thời gian phản hồi, hủy chuyến, mất mạng và thời gian lưu trữ dữ liệu.  |
-| **BG16** | Cho phép triển khai và phát triển từng phần nhằm hạn chế ảnh hưởng đến các chức năng đang hoạt động.                         | Các thành phần độc lập, triển khai từng phần, dễ bảo trì và mở rộng.                                           |
+| **BG16** | Cho phép triển khai và phát triển từng phần nhằm hạn chế ảnh hưởng đến các chức năng đang hoạt động.                         | Các thành phần độc lập, triển khai từng phần, dễ bảo trì và mở rộng.              
+|
 Bước 4: Giới hạn các module thực hiện
 | Mã      | Module                             | Phạm vi chính                                                                                                     |
-| ------- | ---------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
 | **M01** | **Quản lý tài khoản & người dùng** | Đăng ký, đăng nhập, cập nhật thông tin khách hàng/tài xế, xác thực tài khoản                                      |
 | **M02** | **Quản lý tài xế & phương tiện**   | Hồ sơ tài xế, thông tin phương tiện, trạng thái hoạt động, trạng thái sẵn sàng nhận chuyến                        |
 | **M03** | **Đặt xe**                         | Nhập điểm đón, điểm đến, chọn loại xe, tạo và hủy yêu cầu đặt xe                                                  |
@@ -146,9 +145,10 @@ Bước 4: Giới hạn các module thực hiện
 | **M10** | **Báo cáo & thống kê**             | Số lượng chuyến, doanh thu, tỷ lệ hoàn thành, tỷ lệ hủy, hiệu quả tài xế                                          |
 | **M11** | **Phân quyền & bảo mật**           | Xác thực, phân quyền nhân viên, bảo vệ dữ liệu cá nhân/vị trí/giao dịch, audit log                                |
 | **M12** | **Tích hợp hệ thống bên ngoài**    | Payment Provider, Map/GPS Provider và Notification Provider                                                       |
-Bước 5: Hãy xác định các Business Requirements (yêu cầu nghiệp vụ) của hệ thống và thiết kế các yêu cầu tương ứng. Mỗi Business Requirement được mã hóa theo dạng BR01, BR02, 
+
+Bước 5: Hãy xác định các Business Requirements (yêu cầu nghiệp vụ) của hệ thống và thiết kế các yêu cầu tương ứng. Mỗi Business Requirement được mã hóa theo dạng BR01, BR02,..
+
 | Mã BR | Business Requirement / Yêu cầu | Mô tả yêu cầu |
-| --- | --- | --- |
 | BR01 | Đặt xe | Hệ thống phải cho phép khách hàng tạo chuyến đi bằng cách cung cấp điểm đón, điểm đến và loại xe/dịch vụ. |
 | BR02 | Quản lý tài khoản khách hàng | Hệ thống phải cho phép khách hàng đăng ký, đăng nhập và cập nhật thông tin cá nhân. |
 | BR03 | Tìm kiếm tài xế | Hệ thống phải tự động xác định và tìm kiếm tài xế phù hợp dựa trên vị trí, trạng thái sẵn sàng và các tiêu chí vận hành. |
