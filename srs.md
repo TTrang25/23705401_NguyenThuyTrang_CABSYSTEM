@@ -54,7 +54,6 @@ flowchart TB
 
 Bước 2. Xác định Stakeholder matrix
 |                    | **Quan tâm thấp**                                              | **Quan tâm cao**                                                                                        |
-| ------------------ | -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
 | **Ảnh hưởng cao**  | **Keep Satisfied**  <br>• Cơ quan quản lý                      | **Manage Closely**  <br>• Ban giám đốc <br>• Khách hàng <br>• Tài xế <br>• Nhân viên vận hành <br>• BA |
 | **Ảnh hưởng thấp** | **Monitor** <br>• Notification Provider <br>• Map/GPS Provider | **Keep Informed** <br>• Development Team <br>• Payment Provider                                         |
 
@@ -136,7 +135,7 @@ Bước 3: Chuyển đổi các yêu cầu thành mã BG
 |
 Bước 4: Giới hạn các module thực hiện
 | Mã      | Module                             | Phạm vi chính                                                                                                     |
-|         |                                    |                                                                                                                   |
+
 | **M01** | **Quản lý tài khoản & người dùng** | Đăng ký, đăng nhập, cập nhật thông tin khách hàng/tài xế, xác thực tài khoản                                      |
 | **M02** | **Quản lý tài xế & phương tiện**   | Hồ sơ tài xế, thông tin phương tiện, trạng thái hoạt động, trạng thái sẵn sàng nhận chuyến                        |
 | **M03** | **Đặt xe**                         | Nhập điểm đón, điểm đến, chọn loại xe, tạo và hủy yêu cầu đặt xe                                                  |
