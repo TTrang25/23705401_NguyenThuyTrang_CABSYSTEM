@@ -135,7 +135,6 @@ Bước 3: Chuyển đổi các yêu cầu thành mã BG
 |
 Bước 4: Giới hạn các module thực hiện
 | Mã      | Module                             | Phạm vi chính                                                                                                     |
-
 | **M01** | **Quản lý tài khoản & người dùng** | Đăng ký, đăng nhập, cập nhật thông tin khách hàng/tài xế, xác thực tài khoản                                      |
 | **M02** | **Quản lý tài xế & phương tiện**   | Hồ sơ tài xế, thông tin phương tiện, trạng thái hoạt động, trạng thái sẵn sàng nhận chuyến                        |
 | **M03** | **Đặt xe**                         | Nhập điểm đón, điểm đến, chọn loại xe, tạo và hủy yêu cầu đặt xe                                                  |
@@ -150,7 +149,6 @@ Bước 4: Giới hạn các module thực hiện
 | **M12** | **Tích hợp hệ thống bên ngoài**    | Payment Provider, Map/GPS Provider và Notification Provider                                                       |
 
 Bước 5: Hãy xác định các Business Requirements (yêu cầu nghiệp vụ) của hệ thống và thiết kế các yêu cầu tương ứng. Mỗi Business Requirement được mã hóa theo dạng BR01, BR02,..
-
 | Mã BR    | Business Requirement / Yêu cầu      | Mô tả yêu cầu                                                                                                                                 |
 | **BR01** | Đặt xe                              | Hệ thống phải cho phép khách hàng **tạo chuyến đi** bằng cách cung cấp **điểm đón, điểm đến và loại xe/dịch vụ**.                             |
 | **BR02** | Quản lý tài khoản khách hàng        | Hệ thống phải cho phép khách hàng **đăng ký, đăng nhập và cập nhật thông tin cá nhân**.                                                       |
