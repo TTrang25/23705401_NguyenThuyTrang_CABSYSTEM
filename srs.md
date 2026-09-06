@@ -1,15 +1,13 @@
-graph TD
-    CAB(("CAB System"))
-
-    KH["Khách hàng<br/>Customer"]
-    TX["Tài xế<br/>Driver"]
-    QT["Quản trị<br/>Admin / Operator"]
-
-    KH -->|"Đặt xe<br/>Theo dõi<br/>Thanh toán<br/>Đánh giá"| CAB
-    CAB -->|"Thông báo<br/>Trạng thái chuyến<br/>Thông tin tài xế"| KH
-
-    TX -->|"Nhận chuyến<br/>Cập nhật vị trí<br/>Cập nhật trạng thái"| CAB
-    CAB -->|"Thông báo chuyến<br/>Yêu cầu nhận chuyến"| TX
-
-    QT -->|"Quản lý<br/>Điều phối<br/>Xử lý sự cố<br/>Báo cáo"| CAB
-    CAB -->|"Dữ liệu vận hành<br/>Giao dịch<br/>Báo cáo"| QT
+Bước 1. Xác định các stakeholder
+| Stakeholder               | Vai trò                           | Mức độ ảnh hưởng | Mức độ quan tâm | Nhu cầu/Kỳ vọng chính                                                   |
+| ------------------------- | --------------------------------- | ---------------- | --------------- | ----------------------------------------------------------------------- |
+| **Khách hàng**            | Người sử dụng dịch vụ             | Cao              | Cao             | Đặt xe nhanh, theo dõi chuyến, thanh toán thuận tiện, bảo mật thông tin |
+| **Tài xế**                | Người cung cấp dịch vụ vận chuyển | Cao              | Cao             | Nhận chuyến phù hợp, cập nhật trạng thái, quản lý thu nhập              |
+| **Nhân viên vận hành**    | Quản lý hoạt động hằng ngày       | Cao              | Cao             | Theo dõi chuyến, tài xế, xử lý sự cố và quản lý dữ liệu                 |
+| **Ban giám đốc**          | Người quyết định và định hướng    | Rất cao          | Cao             | Doanh thu, KPI, khả năng mở rộng, hiệu quả vận hành                     |
+| **Business Analyst**      | Phân tích và quản lý yêu cầu      | Cao              | Cao             | Làm rõ yêu cầu và đảm bảo hệ thống đáp ứng nghiệp vụ                    |
+| **Development Team**      | Xây dựng hệ thống                 | Trung bình       | Cao             | Yêu cầu rõ ràng, kiến trúc ổn định, khả năng mở rộng                    |
+| **Payment Provider**      | Xử lý thanh toán điện tử          | Trung bình       | Trung bình      | Tích hợp API, bảo mật và xử lý giao dịch chính xác                      |
+| **Notification Provider** | Cung cấp dịch vụ thông báo        | Trung bình       | Trung bình      | Gửi thông báo ổn định, hỗ trợ nhiều kênh                                |
+| **Map/GPS Provider**      | Cung cấp dữ liệu vị trí           | Trung bình       | Trung bình      | Vị trí chính xác, API ổn định                                           |
+| **Cơ quan quản lý**       | Giám sát tuân thủ                 | Cao              | Thấp/Trung bình | Bảo mật dữ liệu, lưu vết và tuân thủ quy định                           |
