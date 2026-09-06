@@ -51,13 +51,15 @@ flowchart TB
     DEV -->|"Xây dựng / Bảo trì"| CAB
 
     REG -->|"Quy định / Kiểm tra tuân thủ"| CAB
+
 Bước 2. Xác định Stakeholder matrix
 |                    | **Quan tâm thấp**                                              | **Quan tâm cao**                                                                                        |
 | ------------------ | -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
 | **Ảnh hưởng cao**  | **Keep Satisfied**  <br>• Cơ quan quản lý                      | **Manage Closely**  <br>• Ban giám đốc <br>• Khách hàng <br>• Tài xế <br>• Nhân viên vận hành <br>• BA |
 | **Ảnh hưởng thấp** | **Monitor** <br>• Notification Provider <br>• Map/GPS Provider | **Keep Informed** <br>• Development Team <br>• Payment Provider                                         |
 
-sơ đồ stakeholder matrix
+Sơ đồ stakeholder matrix
+
 quadrantChart
     title Stakeholder Matrix - Hệ thống CAB
     x-axis "Mức độ quan tâm thấp" --> "Mức độ quan tâm cao"
@@ -81,6 +83,7 @@ quadrantChart
 
     "Nhà cung cấp thông báo": [0.35, 0.30]
     "Nhà cung cấp Map/GPS": [0.40, 0.35]
+    
 1. Manage Closely – Quản lý chặt chẽ
 
 Đây là nhóm quan trọng nhất vì ảnh hưởng cao và quan tâm cao.
@@ -252,7 +255,6 @@ Map/GPS Provider – Nhà cung cấp bản đồ/GPS
 Notification Provider – Nhà cung cấp thông báo
 1. Khách hàng
 | Mã       | Dịch vụ / Use Case của khách hàng |
-| -------- | --------------------------------- |
 | **UC01** | Đăng ký tài khoản                 |
 | **UC02** | Đăng nhập                         |
 | **UC03** | Cập nhật thông tin cá nhân        |
@@ -266,7 +268,6 @@ Notification Provider – Nhà cung cấp thông báo
 | **UC11** | Đánh giá tài xế                   |
 2. Tài xế
 | Mã       | Dịch vụ / Use Case             |
-| -------- | ------------------------------ |
 | **UC13** | Đăng ký tài khoản              |
 | **UC14** | Cập nhật hồ sơ                 |
 | **UC15** | Cập nhật thông tin phương tiện |
@@ -329,8 +330,8 @@ Actor:
 Khách hàng
 
 ↓
-
 Sau đó mới vẽ Use Case Diagram.
+
 flowchart LR
 
     Customer["Khách hàng"]
@@ -398,3 +399,235 @@ flowchart LR
     Staff --> UC22
     Staff --> UC23
     Staff --> UC24
+Bước 8: Xác định các quy didngj nghiệp vụ(business rules) và chuyển đổi chúng thành các yêu cầu chức năng( functional requirements) của hệ thống
+# Xác định Business Rules và Functional Requirements
+
+## 1. Business Rules – Quy định nghiệp vụ
+
+| Mã       | Quy định nghiệp vụ                                                                                       |
+| -------- | -------------------------------------------------------------------------------------------------------- |
+| **BR01** | Khách hàng phải cung cấp điểm đón, điểm đến và loại xe khi đặt xe.                                       |
+| **BR02** | Hệ thống phải ưu tiên tài xế phù hợp và ở gần khách hàng.                                                |
+| **BR03** | Nếu tài xế từ chối hoặc không phản hồi trong thời gian quy định, hệ thống phải tìm tài xế khác.          |
+| **BR04** | Khách hàng phải được thông báo khi có hoặc không có tài xế nhận chuyến.                                  |
+| **BR05** | Tài xế phải cập nhật trạng thái chuyến: đã đến, đã đón khách, đang di chuyển và hoàn thành.              |
+| **BR06** | Cước phí được tính dựa trên loại dịch vụ và thông tin chuyến đi.                                         |
+| **BR07** | Khách hàng được thanh toán bằng tiền mặt hoặc thanh toán điện tử.                                        |
+| **BR08** | Thông tin nhạy cảm của thẻ/tài khoản không được lưu trực tiếp trên hệ thống CAB.                         |
+| **BR09** | Khi thanh toán điện tử thất bại, khách hàng phải được thông báo và có thể thực hiện lại theo chính sách. |
+| **BR10** | Chỉ nhân viên có quyền mới được thực hiện các chức năng quản trị.                                        |
+| **BR11** | Các thông tin quan trọng và giao dịch phải được lưu vết để phục vụ kiểm tra.                             |
+| **BR12** | Hệ thống phải bảo vệ thông tin cá nhân, phương tiện, vị trí và giao dịch.                                |
+
+
+## 2. Functional Requirements – Hệ thống phải làm gì?
+
+| Mã FR    | Functional Requirement                                                             | Liên quan BR |
+| -------- | ---------------------------------------------------------------------------------- | ------------ |
+| **FR01** | Hệ thống cho phép khách hàng nhập điểm đón, điểm đến và chọn loại xe.              | BR01         |
+| **FR02** | Hệ thống tạo yêu cầu đặt xe và ghi nhận thông tin chuyến.                          | BR01         |
+| **FR03** | Hệ thống tự động tìm tài xế phù hợp dựa trên vị trí và trạng thái sẵn sàng.        | BR02         |
+| **FR04** | Hệ thống ưu tiên tài xế phù hợp/gần khách hàng và gửi yêu cầu nhận chuyến.         | BR02         |
+| **FR05** | Hệ thống tự động tìm tài xế khác khi tài xế từ chối hoặc không phản hồi.           | BR03         |
+| **FR06** | Hệ thống thông báo cho khách hàng kết quả tìm tài xế.                              | BR04         |
+| **FR07** | Hệ thống cho phép tài xế cập nhật trạng thái chuyến đi.                            | BR05         |
+| **FR08** | Hệ thống ghi nhận và hiển thị vị trí tài xế, ETA cho khách hàng.                   | BR05         |
+| **FR09** | Hệ thống tự động tính cước dựa trên thông tin chuyến và loại dịch vụ.              | BR06         |
+| **FR10** | Hệ thống hỗ trợ thanh toán tiền mặt và thanh toán điện tử.                         | BR07         |
+| **FR11** | Hệ thống kết nối Payment Provider để xử lý thanh toán điện tử.                     | BR08         |
+| **FR12** | Hệ thống không lưu trực tiếp dữ liệu nhạy cảm của thẻ/tài khoản.                   | BR08         |
+| **FR13** | Hệ thống thông báo kết quả thanh toán cho khách hàng.                              | BR09         |
+| **FR14** | Hệ thống cho phép thực hiện lại giao dịch khi thanh toán thất bại theo chính sách. | BR09         |
+| **FR15** | Hệ thống kiểm tra quyền trước khi cho phép nhân viên thực hiện chức năng.          | BR10         |
+| **FR16** | Hệ thống ghi nhận các thao tác quan trọng và lịch sử giao dịch.                    | BR11         |
+| **FR17** | Hệ thống kiểm soát quyền truy cập và bảo vệ dữ liệu người dùng.                    | BR12         |
+
+
+
+## 3. Ví dụ chuyển đổi
+
+**Quy định nghiệp vụ:**
+
+> BR03 – Nếu tài xế từ chối hoặc không phản hồi trong thời gian quy định, hệ thống phải tìm tài xế khác.
+
+↓
+
+**Hệ thống phải làm gì?**
+
+> FR05 – Hệ thống tự động chuyển sang tìm tài xế khác khi tài xế từ chối hoặc không phản hồi.
+
+↓
+
+**Use Case:**
+
+> **UC13 – Chấp nhận/Từ chối chuyến**
+
+**Actor:** Tài xế
+
+---
+
+### Luồng tổng quát
+
+```text
+Business Rule
+      ↓
+Hệ thống phải làm gì?
+      ↓
+Functional Requirement (FR)
+      ↓
+Use Case (UC)
+      ↓
+Actor
+      ↓
+Thiết kế hệ thống
+```
+
+Bước 9: Xác dịnh các nghiệp vụ phi chức năng
+# Bước 9. Xác định yêu cầu phi chức năng
+
+| Mã NFR    | Nhóm                     | Yêu cầu phi chức năng                                                                                |
+| --------- | ------------------------ | ---------------------------------------------------------------------------------------------------- |
+| **NFR01** | Hiệu năng                | Hệ thống phải phản hồi nhanh và đáp ứng được nhiều yêu cầu đặt xe đồng thời.                         |
+| **NFR02** | Khả năng mở rộng         | Hệ thống phải có khả năng mở rộng khi số lượng khách hàng, tài xế và chuyến đi tăng.                 |
+| **NFR03** | Tính sẵn sàng            | Hệ thống phải duy trì hoạt động ổn định và hạn chế gián đoạn dịch vụ.                                |
+| **NFR04** | Độ tin cậy               | Lỗi của thanh toán hoặc thông báo không được làm ngừng toàn bộ chức năng đặt xe.                     |
+| **NFR05** | Bảo mật                  | Hệ thống phải bảo vệ thông tin cá nhân, thông tin tài xế, vị trí và dữ liệu giao dịch.               |
+| **NFR06** | Phân quyền               | Hệ thống phải đảm bảo người dùng chỉ được truy cập các chức năng được cấp quyền.                     |
+| **NFR07** | Audit/Truy vết           | Hệ thống phải lưu vết các thao tác quan trọng để phục vụ kiểm tra và xử lý sự cố.                    |
+| **NFR08** | Khả năng bảo trì         | Hệ thống phải cho phép bảo trì hoặc nâng cấp từng thành phần mà hạn chế ảnh hưởng đến toàn hệ thống. |
+| **NFR09** | Khả năng tích hợp        | Hệ thống phải dễ dàng tích hợp thêm Payment Provider, Map/GPS Provider và Notification Provider.     |
+| **NFR10** | Khả năng mở rộng dịch vụ | Hệ thống phải hỗ trợ bổ sung loại dịch vụ và phương thức thanh toán mới trong tương lai.             |
+
+### Phân nhóm chính
+
+* **Performance:** NFR01
+* **Scalability:** NFR02
+* **Availability & Reliability:** NFR03, NFR04
+* **Security:** NFR05, NFR06, NFR07
+* **Maintainability:** NFR08
+* **Integration & Extensibility:** NFR09, NFR10
+
+### Công thức ghi nhớ
+
+**Functional Requirement (FR)** → *Hệ thống phải làm gì?*
+
+**Non-Functional Requirement (NFR)** → *Hệ thống phải hoạt động như thế nào?*
+
+Ví dụ:
+
+> **FR03:** Hệ thống phải tự động tìm tài xế phù hợp.
+> **NFR01:** Hệ thống phải thực hiện việc tìm kiếm và phản hồi trong thời gian đáp ứng phù hợp.
+> 
+Bước 10. Thiết kế Use Case và xác định Entity
+
+## 10.1. Thiết kế Use Case
+
+Từ các Functional Requirement (FR), xác định các Use Case và Actor tương ứng.
+
+| Actor                     | Use Case chính                                                                                                                         |
+| ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| **Customer**              | Đăng ký/Đăng nhập, cập nhật thông tin, tạo chuyến, theo dõi chuyến, hủy chuyến, xem lịch sử, thanh toán, đánh giá tài xế               |
+| **Driver**                | Quản lý hồ sơ, quản lý phương tiện, cập nhật trạng thái sẵn sàng, nhận chuyến, chấp nhận/từ chối chuyến, cập nhật trạng thái và vị trí |
+| **Operations Staff**      | Quản lý khách hàng, tài xế, phương tiện, chuyến đi, giám sát chuyến, xử lý sự cố, tra cứu giao dịch, xem báo cáo, phân quyền           |
+| **Payment Provider**      | Xử lý thanh toán điện tử và trả kết quả giao dịch                                                                                      |
+| **Map/GPS Provider**      | Cung cấp vị trí, khoảng cách và ETA                                                                                                    |
+| **Notification Provider** | Gửi Push Notification, SMS, Email                                                                                                      |
+
+### Ví dụ thiết kế UC – Tạo chuyến đi
+
+**UC:** Tạo chuyến đi
+**Actor:** Customer
+
+**Tiền điều kiện:** Khách hàng đã đăng nhập.
+
+**Luồng chính:**
+
+1. Khách hàng nhập điểm đón.
+2. Khách hàng nhập điểm đến.
+3. Khách hàng chọn loại xe/dịch vụ.
+4. Hệ thống kiểm tra thông tin.
+5. Hệ thống tạo yêu cầu chuyến.
+6. Hệ thống chuyển yêu cầu sang chức năng tìm tài xế.
+7. Hệ thống thông báo trạng thái cho khách hàng.
+
+**Hậu điều kiện:** Yêu cầu chuyến được tạo thành công và chuyển sang tìm tài xế.
+
+---
+
+## 10.2. Xác định Entity
+
+Từ các Use Case, xác định các đối tượng dữ liệu chính của hệ thống CAB:
+
+| Mã      | Entity           | Một số thuộc tính chính                         |
+| ------- | ---------------- | ----------------------------------------------- |
+| **E01** | Customer         | CustomerID, Name, Phone, Email                  |
+| **E02** | Driver           | DriverID, Name, Phone, Status                   |
+| **E03** | Vehicle          | VehicleID, PlateNumber, Type, DriverID          |
+| **E04** | Trip             | TripID, Pickup, Destination, Status, Time       |
+| **E05** | Booking          | BookingID, CustomerID, TripID, VehicleType      |
+| **E06** | DriverAssignment | AssignmentID, TripID, DriverID, Status          |
+| **E07** | Payment          | PaymentID, TripID, Amount, Method, Status       |
+| **E08** | Fare             | FareID, TripID, ServiceType, Amount             |
+| **E09** | Rating           | RatingID, TripID, CustomerID, DriverID, Score   |
+| **E10** | Notification     | NotificationID, UserID, Type, Content, Status   |
+| **E11** | Location         | LocationID, DriverID, Latitude, Longitude, Time |
+| **E12** | UserAccount      | UserID, Username, Password, Role, Status        |
+| **E13** | AuditLog         | LogID, UserID, Action, Time                     |
+
+---
+
+## 10.3. Mô hình hóa dữ liệu
+
+Các Entity trên được sử dụng để xây dựng **Entity Relationship Diagram (ERD)**.
+
+Một số quan hệ chính:
+
+```text
+Customer 1 ──── N Booking
+Booking  1 ──── 1 Trip
+Trip     1 ──── N DriverAssignment
+Driver   1 ──── N DriverAssignment
+Driver   1 ──── N Vehicle
+Trip     1 ──── 1 Fare
+Trip     1 ──── 1 Payment
+Trip     1 ──── 1 Rating
+Driver   1 ──── N Location
+UserAccount 1 ──── N AuditLog
+```
+
+### Luồng tổng quát
+
+```text
+Functional Requirement
+        ↓
+     Use Case
+        ↓
+Xác định Actor + nghiệp vụ
+        ↓
+   Xác định Entity
+        ↓
+Xác định thuộc tính + quan hệ
+        ↓
+       ERD
+```
+Bước 11: Xác định Acceptance Criteria (AC) cho các Functional Requirement (FR) của hệ thống, nhằm xác định các điều kiện để một yêu cầu được xem là đạt và được nghiệm thu.
+| Mã AC    | Acceptance Criteria                                                                                |
+| -------- | -------------------------------------------------------------------------------------------------- |
+| **AC01** | Khách hàng nhập đầy đủ điểm đón, điểm đến và loại xe thì hệ thống cho phép tạo yêu cầu.            |
+| **AC02** | Nếu thiếu điểm đón hoặc điểm đến, hệ thống phải thông báo lỗi và không cho tạo yêu cầu.            |
+| **AC03** | Khách hàng phải chọn một loại xe hợp lệ trước khi tạo yêu cầu.                                     |
+| **AC04** | Khi tạo yêu cầu thành công, hệ thống phải hiển thị thông tin chuyến và trạng thái đang tìm tài xế. |
+
+Requirement
+     ↓
+Acceptance Criteria (AC)
+     ↓
+Khi nào requirement được xem là ĐẠT?
+     ↓
+Dùng AC để kiểm tra / nghiệm thu
+
+Ví dụ ngắn nhất:
+
+FR05: Hệ thống phải tự động tìm tài xế khác khi tài xế từ chối.
+
+→ AC05: Khi tài xế từ chối chuyến, hệ thống phải tự động chuyển sang tìm tài xế phù hợp tiếp theo mà không yêu cầu khách hàng đặt lại chuyến.
