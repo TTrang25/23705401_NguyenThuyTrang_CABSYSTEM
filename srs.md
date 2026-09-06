@@ -151,37 +151,39 @@ Bước 4: Giới hạn các module thực hiện
 
 Bước 5: Hãy xác định các Business Requirements (yêu cầu nghiệp vụ) của hệ thống và thiết kế các yêu cầu tương ứng. Mỗi Business Requirement được mã hóa theo dạng BR01, BR02,..
 
-| Mã BR | Business Requirement / Yêu cầu | Mô tả yêu cầu |
-| BR01 | Đặt xe | Hệ thống phải cho phép khách hàng tạo chuyến đi bằng cách cung cấp điểm đón, điểm đến và loại xe/dịch vụ. |
-| BR02 | Quản lý tài khoản khách hàng | Hệ thống phải cho phép khách hàng đăng ký, đăng nhập và cập nhật thông tin cá nhân. |
-| BR03 | Tìm kiếm tài xế | Hệ thống phải tự động xác định và tìm kiếm tài xế phù hợp dựa trên vị trí, trạng thái sẵn sàng và các tiêu chí vận hành. |
-| BR04 | Phân công tài xế | Hệ thống phải ưu tiên và gửi yêu cầu chuyến đi đến tài xế phù hợp, đặc biệt là tài xế ở gần khách hàng. |
-| BR05 | Xử lý tài xế từ chối/không phản hồi | Hệ thống phải tự động tiếp tục tìm tài xế khác khi tài xế được đề xuất từ chối hoặc không phản hồi trong thời gian quy định. |
-| BR06 | Thông báo kết quả tìm tài xế | Hệ thống phải thông báo cho khách hàng khi tìm được tài xế hoặc không tìm được tài xế. |
-| BR07 | Theo dõi chuyến đi | Hệ thống phải cho phép khách hàng theo dõi trạng thái chuyến đi và vị trí tài xế. |
-| BR08 | Quản lý trạng thái chuyến | Hệ thống phải cho phép tài xế cập nhật các trạng thái đã đến điểm đón, đã đón khách, đang di chuyển và hoàn thành chuyến. |
-| BR09 | Quản lý vị trí tài xế | Hệ thống phải ghi nhận vị trí của tài xế để hỗ trợ tìm tài xế và dự kiến thời gian đến (ETA). |
-| BR10 | Quản lý tài xế | Hệ thống phải cho phép tài xế đăng ký/được tạo tài khoản, cập nhật hồ sơ và trạng thái hoạt động. |
-| BR11 | Quản lý phương tiện | Hệ thống phải cho phép quản lý thông tin phương tiện của tài xế. |
-| BR12 | Tính cước | Hệ thống phải tính số tiền khách hàng phải trả dựa trên loại dịch vụ và thông tin chuyến đi. |
-| BR13 | Thanh toán | Hệ thống phải hỗ trợ khách hàng thanh toán bằng tiền mặt hoặc phương thức điện tử. |
-| BR14 | Tích hợp thanh toán | Hệ thống phải tích hợp với nhà cung cấp thanh toán bên ngoài và không lưu trực tiếp thông tin nhạy cảm của thẻ/tài khoản. |
-| BR15 | Xử lý thanh toán thất bại | Hệ thống phải thông báo khi thanh toán điện tử thất bại và cho phép xử lý lại theo chính sách doanh nghiệp. |
-| BR16 | Thông báo | Hệ thống phải gửi thông báo cho khách hàng và tài xế về các sự kiện quan trọng của chuyến đi. |
-| BR17 | Lịch sử chuyến đi | Hệ thống phải cho phép khách hàng xem lịch sử chuyến đi và số tiền đã thanh toán. |
-| BR18 | Đánh giá tài xế | Hệ thống phải cho phép khách hàng đánh giá tài xế sau khi chuyến đi hoàn thành. |
-| BR19 | Quản lý vận hành | Hệ thống phải cung cấp giao diện để nhân viên vận hành quản lý khách hàng, tài xế, phương tiện và chuyến đi. |
-| BR20 | Giám sát chuyến đi | Hệ thống phải cho phép nhân viên vận hành xem các chuyến đang diễn ra và trạng thái tài xế. |
-| BR21 | Xử lý sự cố | Hệ thống phải hỗ trợ nhân viên vận hành tra cứu và xử lý các trường hợp chuyến đi bị lỗi. |
-| BR22 | Quản lý giao dịch | Hệ thống phải cho phép nhân viên vận hành tra cứu lịch sử giao dịch và thanh toán. |
-| BR23 | Báo cáo | Hệ thống phải cung cấp báo cáo về số lượng chuyến, doanh thu, tỷ lệ hoàn thành, tỷ lệ hủy và hiệu quả tài xế. |
-| BR24 | Phân quyền | Hệ thống phải kiểm soát quyền truy cập để nhân viên chỉ thực hiện được các chức năng được cấp quyền. |
-| BR25 | Bảo mật dữ liệu | Hệ thống phải bảo vệ thông tin cá nhân, thông tin phương tiện, dữ liệu vị trí và dữ liệu giao dịch. |
-| BR26 | Lưu vết | Hệ thống phải ghi nhận các thao tác quan trọng để phục vụ kiểm tra và truy vết khi có sự cố. |
-| BR27 | Khả năng mở rộng | Hệ thống phải cho phép mở rộng độc lập các thành phần khi số lượng khách hàng và tài xế tăng. |
-| BR28 | Khả năng tích hợp | Hệ thống phải cho phép bổ sung nhà cung cấp thanh toán, thông báo hoặc các dịch vụ bên ngoài mà không phải xây dựng lại toàn bộ hệ thống. |
-| BR29 | Khả năng mở rộng dịch vụ | Hệ thống phải cho phép doanh nghiệp bổ sung các loại dịch vụ đặt xe mới trong tương lai. |
-| BR30 | Triển khai từng phần | Hệ thống phải hỗ trợ triển khai chức năng mới từng phần, hạn chế ảnh hưởng đến các chức năng đang hoạt động. |
+| Mã VR    | Business Requirement / Yêu cầu      | Mô tả yêu cầu                                                                                                                                 |
+| -------- | ----------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| **BR01** | Đặt xe                              | Hệ thống phải cho phép khách hàng **tạo chuyến đi** bằng cách cung cấp **điểm đón, điểm đến và loại xe/dịch vụ**.                             |
+| **BR02** | Quản lý tài khoản khách hàng        | Hệ thống phải cho phép khách hàng **đăng ký, đăng nhập và cập nhật thông tin cá nhân**.                                                       |
+| **BR03** | Tìm kiếm tài xế                     | Hệ thống phải **tự động xác định và tìm kiếm tài xế phù hợp** dựa trên vị trí, trạng thái sẵn sàng và các tiêu chí vận hành.                  |
+| **BR04** | Phân công tài xế                    | Hệ thống phải **ưu tiên và gửi yêu cầu chuyến đi đến tài xế phù hợp**, đặc biệt là tài xế ở gần khách hàng.                                   |
+| **BR05** | Xử lý tài xế từ chối/không phản hồi | Hệ thống phải **tự động tiếp tục tìm tài xế khác** khi tài xế được đề xuất từ chối hoặc không phản hồi trong thời gian quy định.              |
+| **BBR06** | Thông báo kết quả tìm tài xế        | Hệ thống phải thông báo cho khách hàng khi **tìm được tài xế hoặc không tìm được tài xế**.                                                    |
+| **BR07** | Theo dõi chuyến đi                  | Hệ thống phải cho phép khách hàng **theo dõi trạng thái chuyến đi và vị trí tài xế**.                                                         |
+| **BR08** | Quản lý trạng thái chuyến           | Hệ thống phải cho phép tài xế cập nhật các trạng thái **đã đến điểm đón, đã đón khách, đang di chuyển và hoàn thành chuyến**.                 |
+| **BR09** | Quản lý vị trí tài xế               | Hệ thống phải **ghi nhận vị trí của tài xế** để hỗ trợ tìm tài xế và dự kiến thời gian đến (ETA).                                             |
+| **BR10** | Quản lý tài xế                      | Hệ thống phải cho phép tài xế **đăng ký/được tạo tài khoản, cập nhật hồ sơ và trạng thái hoạt động**.                                         |
+| **BR11** | Quản lý phương tiện                 | Hệ thống phải cho phép quản lý **thông tin phương tiện** của tài xế.                                                                          |
+| **BR12** | Tính cước                           | Hệ thống phải **tính số tiền khách hàng phải trả** dựa trên loại dịch vụ và thông tin chuyến đi.                                              |
+| **BR13** | Thanh toán                          | Hệ thống phải hỗ trợ khách hàng **thanh toán bằng tiền mặt hoặc phương thức điện tử**.                                                        |
+| **BR14** | Tích hợp thanh toán                 | Hệ thống phải tích hợp với **nhà cung cấp thanh toán bên ngoài** và không lưu trực tiếp thông tin nhạy cảm của thẻ/tài khoản.                 |
+| **BR15** | Xử lý thanh toán thất bại           | Hệ thống phải **thông báo khi thanh toán điện tử thất bại** và cho phép xử lý lại theo chính sách doanh nghiệp.                               |
+| **BR16** | Thông báo                           | Hệ thống phải gửi thông báo cho khách hàng và tài xế về **các sự kiện quan trọng của chuyến đi**.                                             |
+| **BR17** | Lịch sử chuyến đi                   | Hệ thống phải cho phép khách hàng **xem lịch sử chuyến đi và số tiền đã thanh toán**.                                                         |
+| **BR18** | Đánh giá tài xế                     | Hệ thống phải cho phép khách hàng **đánh giá tài xế sau khi chuyến đi hoàn thành**.                                                           |
+| **BR19** | Quản lý vận hành                    | Hệ thống phải cung cấp giao diện để nhân viên vận hành **quản lý khách hàng, tài xế, phương tiện và chuyến đi**.                              |
+| **BR20** | Giám sát chuyến đi                  | Hệ thống phải cho phép nhân viên vận hành **xem các chuyến đang diễn ra và trạng thái tài xế**.                                               |
+| **BR21** | Xử lý sự cố                         | Hệ thống phải hỗ trợ nhân viên vận hành **tra cứu và xử lý các trường hợp chuyến đi bị lỗi**.                                                 |
+| **BR22** | Quản lý giao dịch                   | Hệ thống phải cho phép nhân viên vận hành **tra cứu lịch sử giao dịch và thanh toán**.                                                        |
+| **BR23** | Báo cáo                             | Hệ thống phải cung cấp báo cáo về **số lượng chuyến, doanh thu, tỷ lệ hoàn thành, tỷ lệ hủy và hiệu quả tài xế**.                             |
+| **BR24** | Phân quyền                          | Hệ thống phải **kiểm soát quyền truy cập** để nhân viên chỉ thực hiện được các chức năng được cấp quyền.                                      |
+| **BR25** | Bảo mật dữ liệu                     | Hệ thống phải bảo vệ **thông tin cá nhân, thông tin phương tiện, dữ liệu vị trí và dữ liệu giao dịch**.                                       |
+| **BR26** | Lưu vết                             | Hệ thống phải **ghi nhận các thao tác quan trọng** để phục vụ kiểm tra và truy vết khi có sự cố.                                              |
+| **BR27** | Khả năng mở rộng                    | Hệ thống phải cho phép **mở rộng độc lập các thành phần** khi số lượng khách hàng và tài xế tăng.                                             |
+| **BR28** | Khả năng tích hợp                   | Hệ thống phải cho phép **bổ sung nhà cung cấp thanh toán, thông báo hoặc các dịch vụ bên ngoài** mà không phải xây dựng lại toàn bộ hệ thống. |
+| **BR29** | Khả năng mở rộng dịch vụ            | Hệ thống phải cho phép doanh nghiệp **bổ sung các loại dịch vụ đặt xe mới** trong tương lai.                                                  |
+| **BR30** | Triển khai từng phần                | Hệ thống phải hỗ trợ **triển khai chức năng mới từng phần**, hạn chế ảnh hưởng đến các chức năng đang hoạt động.                              |
+
 
 BR01 – Tạo chuyến đi
 
@@ -631,3 +633,11 @@ Ví dụ ngắn nhất:
 FR05: Hệ thống phải tự động tìm tài xế khác khi tài xế từ chối.
 
 → AC05: Khi tài xế từ chối chuyến, hệ thống phải tự động chuyển sang tìm tài xế phù hợp tiếp theo mà không yêu cầu khách hàng đặt lại chuyến.
+Bước  12: Xác định Acceptance Criteria (AC) cho các Functional Requirement (FR) và thiết lập mối quan hệ truy vết giữa BR → FR → AC → UC → Test Case để phục vụ kiểm thử và nghiệm thu hệ thống.
+BR → FR → AC → UC → Test Case
+Yêu cầu nào → chức năng nào → tiêu chí đạt nào → Use Case nào → Test nào.
+| BR              | FR                             | AC                                           | UC                  | Test                             |
+| --------------- | ------------------------------ | -------------------------------------------- | ------------------- | -------------------------------- |
+| **BR01** Đặt xe | **FR01** Nhập thông tin chuyến | **AC01** Nhập đủ thông tin → cho tạo chuyến  | **UC03** Tạo chuyến | **TC01** Kiểm tra tạo chuyến     |
+| **BR01** Đặt xe | **FR01** Nhập thông tin chuyến | **AC02** Thiếu điểm đón → prevent tạo chuyến | **UC03** Tạo chuyến | **TC02** Kiểm tra thiếu điểm đón |
+| **BR01** Đặt xe | **FR01** Nhập thông tin chuyến | **AC03** Thiếu loại xe → prevent tạo chuyến  | **UC03** Tạo chuyến | **TC03** Kiểm tra thiếu loại xe  |
