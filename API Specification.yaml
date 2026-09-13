@@ -1,1 +1,38 @@
+openapi: 3.0.3
 
+info:
+  title: CAB System API
+  description: API cho hệ thống đặt xe CAB
+  version: 1.0.0
+
+paths:
+
+  /bookings:
+    post:
+      tags:
+        - Booking
+      summary: Tạo yêu cầu đặt xe
+      description: Khách hàng tạo yêu cầu đặt xe.
+      operationId: createBooking
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - pickupLocation
+                - destination
+              properties:
+                pickupLocation:
+                  type: string
+                destination:
+                  type: string
+
+      responses:
+        '201':
+          description: Tạo yêu cầu đặt xe thành công
+
+        '400':
+          description: Dữ liệu không hợp lệ
