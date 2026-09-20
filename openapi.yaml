@@ -1,0 +1,846 @@
+openapi: 3.0.3
+info:
+  title: CAB System API
+  description: REST API cho hệ thống đặt xe CAB (Công ty ABC)
+  version: 1.0.0
+servers:
+  - url: https://api.cabsystem.abc.vn/v1
+
+tags:
+  - name: Auth
+  - name: Trips
+  - name: Drivers
+  - name: Payments
+  - name: Ratings
+  - name: Notifications
+  - name: Admin
+  - name: Webhooks
+
+security:
+  - bearerAuth: []
+
+paths:
+
+  # ---------- Auth ----------
+  /auth/register:
+    post:
+      tags: [Auth]
+      summary: Đăng ký tài khoản (UC01, UC12)
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [role, name, phone, password]
+              properties:
+                role: { type: string, enum: [customer, driver] }
+                name: { type: string }
+                phone: { type: string }
+                email: { type: string, format: email }
+                password: { type: string, format: password }
+      responses:
+        '201':
+          description: Tạo tài khoản thành công
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/UserAccount' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '409': { description: Số điện thoại/email đã tồn tại }
+
+  /auth/login:
+    post:
+      tags: [Auth]
+      summary: Đăng nhập (UC02)
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [phone, password]
+              properties:
+                phone: { type: string }
+                password: { type: string, format: password }
+      responses:
+        '200':
+          description: Đăng nhập thành công
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessToken: { type: string }
+                  refreshToken: { type: string }
+                  user: { $ref: '#/components/schemas/UserAccount' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /auth/refresh:
+    post:
+      tags: [Auth]
+      summary: Làm mới access token
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [refreshToken]
+              properties:
+                refreshToken: { type: string }
+      responses:
+        '200':
+          description: Token mới
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessToken: { type: string }
+
+  /auth/logout:
+    post:
+      tags: [Auth]
+      summary: Đăng xuất
+      responses:
+        '204': { description: Đăng xuất thành công }
+
+  /users/me:
+    get:
+      tags: [Auth]
+      summary: Lấy thông tin tài khoản hiện tại
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/UserAccount' }
+    put:
+      tags: [Auth]
+      summary: Cập nhật thông tin cá nhân (UC03)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name: { type: string }
+                email: { type: string, format: email }
+      responses:
+        '200':
+          description: Cập nhật thành công
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/UserAccount' }
+
+  /users/{id}/role:
+    put:
+      tags: [Admin]
+      summary: Gán/đổi vai trò nhân viên (UC31)
+      parameters:
+        - $ref: '#/components/parameters/IdPath'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [role]
+              properties:
+                role: { type: string, enum: [staff_admin, staff_ops, driver, customer] }
+      responses:
+        '200': { description: Cập nhật vai trò thành công }
+        '403': { $ref: '#/components/responses/Forbidden' }
+
+  # ---------- Trips (Customer) ----------
+  /trips:
+    post:
+      tags: [Trips]
+      summary: Tạo chuyến đi (UC04, FR01-FR02, AC01-AC03)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/TripCreateRequest' }
+      responses:
+        '201':
+          description: Chuyến đi được tạo, chuyển sang tìm tài xế
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Trip' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+
+  /trips/{tripId}:
+    get:
+      tags: [Trips]
+      summary: Xem chi tiết / trạng thái chuyến (UC05, AC04)
+      parameters:
+        - $ref: '#/components/parameters/TripIdPath'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Trip' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /trips/{tripId}/cancel:
+    put:
+      tags: [Trips]
+      summary: Hủy chuyến đi (UC06)
+      parameters:
+        - $ref: '#/components/parameters/TripIdPath'
+      responses:
+        '200':
+          description: Đã hủy
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Trip' }
+        '409': { description: Chuyến đi không thể hủy ở trạng thái hiện tại }
+
+  /trips/{tripId}/tracking:
+    get:
+      tags: [Trips]
+      summary: Vị trí tài xế theo thời gian thực + ETA (UC05, FR08)
+      parameters:
+        - $ref: '#/components/parameters/TripIdPath'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  driverLocation: { $ref: '#/components/schemas/GeoPoint' }
+                  etaSeconds: { type: integer }
+
+  /customers/{id}/trips:
+    get:
+      tags: [Trips]
+      summary: Lịch sử chuyến đi của khách hàng (UC07)
+      parameters:
+        - $ref: '#/components/parameters/IdPath'
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/LimitParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/TripListResponse' }
+
+  # ---------- Drivers ----------
+  /drivers/{id}:
+    get:
+      tags: [Drivers]
+      summary: Xem hồ sơ tài xế (UC13)
+      parameters:
+        - $ref: '#/components/parameters/IdPath'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Driver' }
+    put:
+      tags: [Drivers]
+      summary: Cập nhật hồ sơ tài xế (UC13)
+      parameters:
+        - $ref: '#/components/parameters/IdPath'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Driver' }
+      responses:
+        '200':
+          description: Cập nhật thành công
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Driver' }
+
+  /drivers/{id}/vehicles:
+    post:
+      tags: [Drivers]
+      summary: Thêm phương tiện (UC14)
+      parameters:
+        - $ref: '#/components/parameters/IdPath'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Vehicle' }
+      responses:
+        '201':
+          description: Đã thêm phương tiện
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Vehicle' }
+
+  /vehicles/{vehicleId}:
+    put:
+      tags: [Drivers]
+      summary: Cập nhật thông tin phương tiện (UC14)
+      parameters:
+        - name: vehicleId
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Vehicle' }
+      responses:
+        '200': { description: Cập nhật thành công }
+
+  /drivers/{id}/availability:
+    put:
+      tags: [Drivers]
+      summary: Bật/tắt trạng thái sẵn sàng nhận chuyến (UC15)
+      parameters:
+        - $ref: '#/components/parameters/IdPath'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [available]
+              properties:
+                available: { type: boolean }
+      responses:
+        '200': { description: Cập nhật thành công }
+
+  /drivers/{id}/trip-requests:
+    get:
+      tags: [Drivers]
+      summary: Danh sách chuyến mới được đề xuất (UC16)
+      parameters:
+        - $ref: '#/components/parameters/IdPath'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Trip' }
+
+  /trips/{tripId}/accept:
+    put:
+      tags: [Drivers]
+      summary: Tài xế chấp nhận chuyến (UC17)
+      parameters:
+        - $ref: '#/components/parameters/TripIdPath'
+      responses:
+        '200': { description: Đã chấp nhận }
+
+  /trips/{tripId}/reject:
+    put:
+      tags: [Drivers]
+      summary: Tài xế từ chối chuyến (UC18, RULE03)
+      parameters:
+        - $ref: '#/components/parameters/TripIdPath'
+      responses:
+        '200': { description: Đã từ chối, hệ thống tự tìm tài xế khác (AC05) }
+
+  /trips/{tripId}/status:
+    put:
+      tags: [Drivers]
+      summary: Cập nhật trạng thái chuyến (UC19, RULE05)
+      parameters:
+        - $ref: '#/components/parameters/TripIdPath'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [status]
+              properties:
+                status:
+                  type: string
+                  enum: [arrived, picked_up, in_progress, completed]
+      responses:
+        '200':
+          description: Cập nhật thành công
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Trip' }
+
+  /drivers/{id}/location:
+    put:
+      tags: [Drivers]
+      summary: Cập nhật vị trí hiện tại (UC20, FR08)
+      parameters:
+        - $ref: '#/components/parameters/IdPath'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/GeoPoint' }
+      responses:
+        '204': { description: Đã cập nhật }
+
+  /trips/{tripId}/complete:
+    post:
+      tags: [Drivers]
+      summary: Hoàn thành chuyến (UC21)
+      parameters:
+        - $ref: '#/components/parameters/TripIdPath'
+      responses:
+        '200':
+          description: Chuyến hoàn thành, chuyển sang tính cước
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Trip' }
+
+  # ---------- Fare & Payment ----------
+  /trips/{tripId}/fare:
+    get:
+      tags: [Payments]
+      summary: Xem cước phí (UC08, FR09)
+      parameters:
+        - $ref: '#/components/parameters/TripIdPath'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Fare' }
+
+  /trips/{tripId}/payments:
+    post:
+      tags: [Payments]
+      summary: Thanh toán chuyến đi (UC09, FR10)
+      parameters:
+        - $ref: '#/components/parameters/TripIdPath'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [method]
+              properties:
+                method: { type: string, enum: [cash, card] }
+      responses:
+        '201':
+          description: Đã tạo giao dịch thanh toán
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Payment' }
+
+  /payments/{paymentId}:
+    get:
+      tags: [Payments]
+      summary: Xem kết quả thanh toán (UC10)
+      parameters:
+        - name: paymentId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Payment' }
+
+  /payments/{paymentId}/retry:
+    post:
+      tags: [Payments]
+      summary: Thử lại thanh toán thất bại (RULE09, FR14)
+      parameters:
+        - name: paymentId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Kết quả thử lại
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Payment' }
+
+  # ---------- Ratings & Notifications ----------
+  /trips/{tripId}/rating:
+    post:
+      tags: [Ratings]
+      summary: Đánh giá tài xế sau chuyến (UC11)
+      parameters:
+        - $ref: '#/components/parameters/TripIdPath'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Rating' }
+      responses:
+        '201':
+          description: Đã ghi nhận đánh giá
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Rating' }
+
+  /drivers/{id}/ratings:
+    get:
+      tags: [Ratings]
+      summary: Xem điểm đánh giá của tài xế
+      parameters:
+        - $ref: '#/components/parameters/IdPath'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Rating' }
+
+  /notifications:
+    get:
+      tags: [Notifications]
+      summary: Danh sách thông báo của người dùng hiện tại
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Notification' }
+
+  /notifications/{id}/read:
+    put:
+      tags: [Notifications]
+      summary: Đánh dấu thông báo đã đọc
+      parameters:
+        - $ref: '#/components/parameters/IdPath'
+      responses:
+        '204': { description: Đã đánh dấu }
+
+  # ---------- Admin / Operations ----------
+  /admin/customers:
+    get:
+      tags: [Admin]
+      summary: Danh sách khách hàng (UC22)
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/LimitParam'
+      responses:
+        '200': { description: OK }
+
+  /admin/drivers:
+    get:
+      tags: [Admin]
+      summary: Danh sách/quản lý tài xế (UC23)
+      responses:
+        '200': { description: OK }
+
+  /admin/vehicles:
+    get:
+      tags: [Admin]
+      summary: Danh sách/quản lý phương tiện (UC24)
+      responses:
+        '200': { description: OK }
+
+  /admin/trips:
+    get:
+      tags: [Admin]
+      summary: Danh sách/quản lý chuyến đi (UC25)
+      responses:
+        '200': { description: OK }
+
+  /admin/trips/active:
+    get:
+      tags: [Admin]
+      summary: Giám sát chuyến đang diễn ra (UC26)
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Trip' }
+
+  /admin/drivers/status:
+    get:
+      tags: [Admin]
+      summary: Trạng thái tài xế theo thời gian thực (UC27)
+      responses:
+        '200': { description: OK }
+
+  /admin/trips/{tripId}/incident:
+    post:
+      tags: [Admin]
+      summary: Ghi nhận & xử lý sự cố chuyến đi (UC28)
+      parameters:
+        - $ref: '#/components/parameters/TripIdPath'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [description]
+              properties:
+                description: { type: string }
+      responses:
+        '201': { description: Đã ghi nhận sự cố }
+
+  /admin/transactions:
+    get:
+      tags: [Admin]
+      summary: Tra cứu giao dịch (UC29)
+      responses:
+        '200': { description: OK }
+
+  /admin/reports:
+    get:
+      tags: [Admin]
+      summary: Báo cáo thống kê (UC30, BR23)
+      parameters:
+        - name: from
+          in: query
+          schema: { type: string, format: date }
+        - name: to
+          in: query
+          schema: { type: string, format: date }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  totalTrips: { type: integer }
+                  revenue: { type: number }
+                  completionRate: { type: number }
+                  cancellationRate: { type: number }
+
+  /admin/audit-logs:
+    get:
+      tags: [Admin]
+      summary: Tra cứu nhật ký thao tác (BR26)
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/AuditLog' }
+
+  # ---------- Webhooks ----------
+  /webhooks/payment-provider:
+    post:
+      tags: [Webhooks]
+      summary: Callback kết quả giao dịch từ Payment Provider (FR11, FR13)
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                providerTransactionId: { type: string }
+                status: { type: string, enum: [success, failed] }
+      responses:
+        '200': { description: Đã nhận }
+
+  /webhooks/notification-provider:
+    post:
+      tags: [Webhooks]
+      summary: Callback trạng thái gửi từ Notification Provider
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                notificationId: { type: string }
+                status: { type: string, enum: [sent, failed] }
+      responses:
+        '200': { description: Đã nhận }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  parameters:
+    IdPath:
+      name: id
+      in: path
+      required: true
+      schema: { type: string }
+    TripIdPath:
+      name: tripId
+      in: path
+      required: true
+      schema: { type: string }
+    PageParam:
+      name: page
+      in: query
+      schema: { type: integer, default: 1 }
+    LimitParam:
+      name: limit
+      in: query
+      schema: { type: integer, default: 20 }
+
+  responses:
+    BadRequest:
+      description: Dữ liệu không hợp lệ
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    Unauthorized:
+      description: Sai thông tin đăng nhập hoặc token không hợp lệ
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    Forbidden:
+      description: Không đủ quyền thực hiện thao tác
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    NotFound:
+      description: Không tìm thấy dữ liệu
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+
+  schemas:
+    Error:
+      type: object
+      properties:
+        error: { type: string }
+        message: { type: string }
+
+    GeoPoint:
+      type: object
+      properties:
+        lat: { type: number, format: double }
+        lng: { type: number, format: double }
+        address: { type: string }
+
+    UserAccount:
+      type: object
+      properties:
+        userId: { type: string }
+        username: { type: string }
+        role: { type: string, enum: [customer, driver, staff_admin, staff_ops] }
+        status: { type: string, enum: [active, inactive] }
+
+    Customer:
+      type: object
+      properties:
+        customerId: { type: string }
+        name: { type: string }
+        phone: { type: string }
+        email: { type: string }
+
+    Driver:
+      type: object
+      properties:
+        driverId: { type: string }
+        name: { type: string }
+        phone: { type: string }
+        status: { type: string, enum: [available, busy, offline] }
+
+    Vehicle:
+      type: object
+      properties:
+        vehicleId: { type: string }
+        plateNumber: { type: string }
+        type: { type: string, enum: [standard, premium, bike] }
+        driverId: { type: string }
+
+    TripCreateRequest:
+      type: object
+      required: [pickup, destination, vehicleType]
+      properties:
+        pickup: { $ref: '#/components/schemas/GeoPoint' }
+        destination: { $ref: '#/components/schemas/GeoPoint' }
+        vehicleType: { type: string, enum: [standard, premium, bike] }
+
+    Trip:
+      type: object
+      properties:
+        tripId: { type: string }
+        customerId: { type: string }
+        driverId: { type: string, nullable: true }
+        pickup: { $ref: '#/components/schemas/GeoPoint' }
+        destination: { $ref: '#/components/schemas/GeoPoint' }
+        status:
+          type: string
+          enum: [finding_driver, assigned, arrived, picked_up, in_progress, completed, cancelled]
+        createdAt: { type: string, format: date-time }
+
+    TripListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items: { $ref: '#/components/schemas/Trip' }
+        total: { type: integer }
+        page: { type: integer }
+        limit: { type: integer }
+
+    Fare:
+      type: object
+      properties:
+        fareId: { type: string }
+        tripId: { type: string }
+        serviceType: { type: string }
+        amount: { type: number }
+
+    Payment:
+      type: object
+      properties:
+        paymentId: { type: string }
+        tripId: { type: string }
+        amount: { type: number }
+        method: { type: string, enum: [cash, card] }
+        status: { type: string, enum: [pending, success, failed] }
+        providerTransactionId: { type: string, nullable: true }
+
+    Rating:
+      type: object
+      properties:
+        ratingId: { type: string }
+        tripId: { type: string }
+        customerId: { type: string }
+        driverId: { type: string }
+        score: { type: integer, minimum: 1, maximum: 5 }
+        comment: { type: string, nullable: true }
+
+    Notification:
+      type: object
+      properties:
+        notificationId: { type: string }
+        userId: { type: string }
+        type: { type: string, enum: [push, sms, email] }
+        content: { type: string }
+        status: { type: string, enum: [pending, sent, failed, read] }
+
+    AuditLog:
+      type: object
+      properties:
+        logId: { type: string }
+        userId: { type: string }
+        action: { type: string }
+        time: { type: string, format: date-time }
