@@ -638,3 +638,21 @@ Yêu cầu nào → chức năng nào → tiêu chí đạt nào → Use Case n�
 | **BR01** Đặt xe | **FR01** Nhập thông tin chuyến | **AC01** Nhập đủ thông tin → cho tạo chuyến  | **UC03** Tạo chuyến | **TC01** Kiểm tra tạo chuyến     |
 | **BR01** Đặt xe | **FR01** Nhập thông tin chuyến | **AC02** Thiếu điểm đón → prevent tạo chuyến | **UC03** Tạo chuyến | **TC02** Kiểm tra thiếu điểm đón |
 | **BR01** Đặt xe | **FR01** Nhập thông tin chuyến | **AC03** Thiếu loại xe → prevent tạo chuyến  | **UC03** Tạo chuyến | **TC03** Kiểm tra thiếu loại xe  |
+
+
+TESTCASE
+Đăng nhập
+│
+├── Username
+│   ├── Username đúng
+│   ├── Username sai
+│   ├── Username trống
+│   ├── Username không tồn tại
+│   └── Username sai định dạng
+│
+└── Password
+    ├── Password đúng
+    ├── Password sai
+    ├── Password trống
+    ├── Password sai định dạng
+    └── Password quá dài/ngắn
