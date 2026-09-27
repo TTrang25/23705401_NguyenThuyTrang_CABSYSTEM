@@ -1,0 +1,12 @@
+{
+  "name": "cab-system-microservices",
+  "version": "1.0.0",
+  "private": true,
+  "description": "CAB System - Node.js microservices",
+  "scripts": {
+    "start": "node gateway/server.js"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
