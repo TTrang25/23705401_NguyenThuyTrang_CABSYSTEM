@@ -20,8 +20,6 @@ security:
   - bearerAuth: []
 
 paths:
-
-  # ---------- Auth ----------
   /auth/register:
     post:
       tags: [Auth]
@@ -36,10 +34,10 @@ paths:
               required: [role, name, phone, password]
               properties:
                 role: { type: string, enum: [customer, driver] }
-                name: { type: string }
-                phone: { type: string }
+                name: { type: string, minLength: 1, maxLength: 100 }
+                phone: { type: string, pattern: '^0[0-9]{9}$' }
                 email: { type: string, format: email }
-                password: { type: string, format: password }
+                password: { type: string, format: password, minLength: 6, maxLength: 100 }
       responses:
         '201':
           description: Tạo tài khoản thành công
@@ -47,7 +45,7 @@ paths:
             application/json:
               schema: { $ref: '#/components/schemas/UserAccount' }
         '400': { $ref: '#/components/responses/BadRequest' }
-        '409': { description: Số điện thoại/email đã tồn tại }
+        '409': { description: Số điện thoại hoặc email đã tồn tại }
 
   /auth/login:
     post:
@@ -62,8 +60,8 @@ paths:
               type: object
               required: [phone, password]
               properties:
-                phone: { type: string }
-                password: { type: string, format: password }
+                phone: { type: string, pattern: '^0[0-9]{9}$' }
+                password: { type: string, format: password, minLength: 6, maxLength: 100 }
       responses:
         '200':
           description: Đăng nhập thành công
@@ -71,11 +69,13 @@ paths:
             application/json:
               schema:
                 type: object
+                required: [accessToken, refreshToken, user]
                 properties:
                   accessToken: { type: string }
                   refreshToken: { type: string }
                   user: { $ref: '#/components/schemas/UserAccount' }
         '401': { $ref: '#/components/responses/Unauthorized' }
+        '429': { description: Quá nhiều lần đăng nhập thất bại }
 
   /auth/refresh:
     post:
@@ -90,7 +90,7 @@ paths:
               type: object
               required: [refreshToken]
               properties:
-                refreshToken: { type: string }
+                refreshToken: { type: string, minLength: 1 }
       responses:
         '200':
           description: Token mới
@@ -98,8 +98,10 @@ paths:
             application/json:
               schema:
                 type: object
+                required: [accessToken]
                 properties:
                   accessToken: { type: string }
+        '401': { $ref: '#/components/responses/Unauthorized' }
 
   /auth/logout:
     post:
@@ -107,6 +109,7 @@ paths:
       summary: Đăng xuất
       responses:
         '204': { description: Đăng xuất thành công }
+        '401': { $ref: '#/components/responses/Unauthorized' }
 
   /users/me:
     get:
@@ -128,14 +131,15 @@ paths:
             schema:
               type: object
               properties:
-                name: { type: string }
-                email: { type: string, format: email }
+                name: { type: string, minLength: 1, maxLength: 100 }
+                email: { type: string, format: email, nullable: true }
       responses:
         '200':
           description: Cập nhật thành công
           content:
             application/json:
               schema: { $ref: '#/components/schemas/UserAccount' }
+        '400': { $ref: '#/components/responses/BadRequest' }
 
   /users/{id}/role:
     put:
@@ -156,7 +160,6 @@ paths:
         '200': { description: Cập nhật vai trò thành công }
         '403': { $ref: '#/components/responses/Forbidden' }
 
-  # ---------- Trips (Customer) ----------
   /trips:
     post:
       tags: [Trips]
@@ -173,6 +176,7 @@ paths:
             application/json:
               schema: { $ref: '#/components/schemas/Trip' }
         '400': { $ref: '#/components/responses/BadRequest' }
+        '409': { description: Không thể tạo chuyến do trạng thái tài khoản/chuyến hiện tại }
 
   /trips/{tripId}:
     get:
@@ -200,6 +204,7 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/Trip' }
+        '404': { $ref: '#/components/responses/NotFound' }
         '409': { description: Chuyến đi không thể hủy ở trạng thái hiện tại }
 
   /trips/{tripId}/tracking:
@@ -215,9 +220,11 @@ paths:
             application/json:
               schema:
                 type: object
+                required: [driverLocation, etaSeconds]
                 properties:
                   driverLocation: { $ref: '#/components/schemas/GeoPoint' }
-                  etaSeconds: { type: integer }
+                  etaSeconds: { type: integer, minimum: 0 }
+        '404': { $ref: '#/components/responses/NotFound' }
 
   /customers/{id}/trips:
     get:
@@ -234,7 +241,6 @@ paths:
             application/json:
               schema: { $ref: '#/components/schemas/TripListResponse' }
 
-  # ---------- Drivers ----------
   /drivers/{id}:
     get:
       tags: [Drivers]
@@ -247,6 +253,7 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/Driver' }
+        '404': { $ref: '#/components/responses/NotFound' }
     put:
       tags: [Drivers]
       summary: Cập nhật hồ sơ tài xế (UC13)
@@ -256,13 +263,14 @@ paths:
         required: true
         content:
           application/json:
-            schema: { $ref: '#/components/schemas/Driver' }
+            schema: { $ref: '#/components/schemas/DriverUpdateRequest' }
       responses:
         '200':
           description: Cập nhật thành công
           content:
             application/json:
               schema: { $ref: '#/components/schemas/Driver' }
+        '400': { $ref: '#/components/responses/BadRequest' }
 
   /drivers/{id}/vehicles:
     post:
@@ -274,13 +282,14 @@ paths:
         required: true
         content:
           application/json:
-            schema: { $ref: '#/components/schemas/Vehicle' }
+            schema: { $ref: '#/components/schemas/VehicleCreateRequest' }
       responses:
         '201':
           description: Đã thêm phương tiện
           content:
             application/json:
               schema: { $ref: '#/components/schemas/Vehicle' }
+        '400': { $ref: '#/components/responses/BadRequest' }
 
   /vehicles/{vehicleId}:
     put:
@@ -290,14 +299,15 @@ paths:
         - name: vehicleId
           in: path
           required: true
-          schema: { type: string }
+          schema: { type: string, minLength: 1 }
       requestBody:
         required: true
         content:
           application/json:
-            schema: { $ref: '#/components/schemas/Vehicle' }
+            schema: { $ref: '#/components/schemas/VehicleUpdateRequest' }
       responses:
         '200': { description: Cập nhật thành công }
+        '404': { $ref: '#/components/responses/NotFound' }
 
   /drivers/{id}/availability:
     put:
@@ -340,6 +350,7 @@ paths:
         - $ref: '#/components/parameters/TripIdPath'
       responses:
         '200': { description: Đã chấp nhận }
+        '409': { description: Chuyến đã được tài xế khác nhận hoặc không còn hợp lệ }
 
   /trips/{tripId}/reject:
     put:
@@ -348,7 +359,8 @@ paths:
       parameters:
         - $ref: '#/components/parameters/TripIdPath'
       responses:
-        '200': { description: Đã từ chối, hệ thống tự tìm tài xế khác (AC05) }
+        '200': { description: Đã từ chối, hệ thống tự tìm tài xế khác }
+        '409': { description: Lời mời đã hết hạn hoặc chuyến không còn hợp lệ }
 
   /trips/{tripId}/status:
     put:
@@ -373,6 +385,7 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/Trip' }
+        '409': { description: Chuyển trạng thái không hợp lệ }
 
   /drivers/{id}/location:
     put:
@@ -387,6 +400,7 @@ paths:
             schema: { $ref: '#/components/schemas/GeoPoint' }
       responses:
         '204': { description: Đã cập nhật }
+        '400': { $ref: '#/components/responses/BadRequest' }
 
   /trips/{tripId}/complete:
     post:
@@ -400,8 +414,8 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/Trip' }
+        '409': { description: Chuyến chưa ở trạng thái có thể hoàn thành }
 
-  # ---------- Fare & Payment ----------
   /trips/{tripId}/fare:
     get:
       tags: [Payments]
@@ -414,6 +428,7 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/Fare' }
+        '404': { $ref: '#/components/responses/NotFound' }
 
   /trips/{tripId}/payments:
     post:
@@ -436,6 +451,7 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/Payment' }
+        '409': { description: Chuyến chưa hoàn thành hoặc đã được thanh toán }
 
   /payments/{paymentId}:
     get:
@@ -445,13 +461,14 @@ paths:
         - name: paymentId
           in: path
           required: true
-          schema: { type: string }
+          schema: { type: string, minLength: 1 }
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema: { $ref: '#/components/schemas/Payment' }
+        '404': { $ref: '#/components/responses/NotFound' }
 
   /payments/{paymentId}/retry:
     post:
@@ -461,15 +478,15 @@ paths:
         - name: paymentId
           in: path
           required: true
-          schema: { type: string }
+          schema: { type: string, minLength: 1 }
       responses:
         '200':
           description: Kết quả thử lại
           content:
             application/json:
               schema: { $ref: '#/components/schemas/Payment' }
+        '409': { description: Giao dịch không ở trạng thái có thể retry }
 
-  # ---------- Ratings & Notifications ----------
   /trips/{tripId}/rating:
     post:
       tags: [Ratings]
@@ -480,13 +497,14 @@ paths:
         required: true
         content:
           application/json:
-            schema: { $ref: '#/components/schemas/Rating' }
+            schema: { $ref: '#/components/schemas/RatingCreateRequest' }
       responses:
         '201':
           description: Đã ghi nhận đánh giá
           content:
             application/json:
               schema: { $ref: '#/components/schemas/Rating' }
+        '409': { description: Chuyến chưa hoàn thành hoặc đã được đánh giá }
 
   /drivers/{id}/ratings:
     get:
@@ -524,8 +542,8 @@ paths:
         - $ref: '#/components/parameters/IdPath'
       responses:
         '204': { description: Đã đánh dấu }
+        '404': { $ref: '#/components/responses/NotFound' }
 
-  # ---------- Admin / Operations ----------
   /admin/customers:
     get:
       tags: [Admin]
@@ -591,9 +609,11 @@ paths:
               type: object
               required: [description]
               properties:
-                description: { type: string }
+                description: { type: string, minLength: 1, maxLength: 2000 }
       responses:
         '201': { description: Đã ghi nhận sự cố }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '403': { $ref: '#/components/responses/Forbidden' }
 
   /admin/transactions:
     get:
@@ -620,11 +640,12 @@ paths:
             application/json:
               schema:
                 type: object
+                required: [totalTrips, revenue, completionRate, cancellationRate]
                 properties:
-                  totalTrips: { type: integer }
-                  revenue: { type: number }
-                  completionRate: { type: number }
-                  cancellationRate: { type: number }
+                  totalTrips: { type: integer, minimum: 0 }
+                  revenue: { type: number, minimum: 0 }
+                  completionRate: { type: number, minimum: 0, maximum: 1 }
+                  cancellationRate: { type: number, minimum: 0, maximum: 1 }
 
   /admin/audit-logs:
     get:
@@ -639,7 +660,6 @@ paths:
                 type: array
                 items: { $ref: '#/components/schemas/AuditLog' }
 
-  # ---------- Webhooks ----------
   /webhooks/payment-provider:
     post:
       tags: [Webhooks]
@@ -651,11 +671,13 @@ paths:
           application/json:
             schema:
               type: object
+              required: [providerTransactionId, status]
               properties:
-                providerTransactionId: { type: string }
+                providerTransactionId: { type: string, minLength: 1 }
                 status: { type: string, enum: [success, failed] }
       responses:
         '200': { description: Đã nhận }
+        '400': { $ref: '#/components/responses/BadRequest' }
 
   /webhooks/notification-provider:
     post:
@@ -668,11 +690,13 @@ paths:
           application/json:
             schema:
               type: object
+              required: [notificationId, status]
               properties:
-                notificationId: { type: string }
+                notificationId: { type: string, minLength: 1 }
                 status: { type: string, enum: [sent, failed] }
       responses:
         '200': { description: Đã nhận }
+        '400': { $ref: '#/components/responses/BadRequest' }
 
 components:
   securitySchemes:
@@ -686,20 +710,20 @@ components:
       name: id
       in: path
       required: true
-      schema: { type: string }
+      schema: { type: string, minLength: 1 }
     TripIdPath:
       name: tripId
       in: path
       required: true
-      schema: { type: string }
+      schema: { type: string, minLength: 1 }
     PageParam:
       name: page
       in: query
-      schema: { type: integer, default: 1 }
+      schema: { type: integer, minimum: 1, default: 1 }
     LimitParam:
       name: limit
       in: query
-      schema: { type: integer, default: 20 }
+      schema: { type: integer, minimum: 1, maximum: 100, default: 20 }
 
   responses:
     BadRequest:
@@ -726,24 +750,27 @@ components:
   schemas:
     Error:
       type: object
+      required: [error, message]
       properties:
         error: { type: string }
         message: { type: string }
 
     GeoPoint:
       type: object
+      required: [lat, lng]
       properties:
-        lat: { type: number, format: double }
-        lng: { type: number, format: double }
-        address: { type: string }
+        lat: { type: number, format: double, minimum: -90, maximum: 90 }
+        lng: { type: number, format: double, minimum: -180, maximum: 180 }
+        address: { type: string, maxLength: 500, nullable: true }
 
     UserAccount:
       type: object
+      required: [userId, role, status]
       properties:
         userId: { type: string }
         username: { type: string }
         role: { type: string, enum: [customer, driver, staff_admin, staff_ops] }
-        status: { type: string, enum: [active, inactive] }
+        status: { type: string, enum: [active, inactive, locked] }
 
     Customer:
       type: object
@@ -751,7 +778,7 @@ components:
         customerId: { type: string }
         name: { type: string }
         phone: { type: string }
-        email: { type: string }
+        email: { type: string, format: email, nullable: true }
 
     Driver:
       type: object
@@ -761,6 +788,12 @@ components:
         phone: { type: string }
         status: { type: string, enum: [available, busy, offline] }
 
+    DriverUpdateRequest:
+      type: object
+      properties:
+        name: { type: string, minLength: 1, maxLength: 100 }
+        phone: { type: string, pattern: '^0[0-9]{9}$' }
+
     Vehicle:
       type: object
       properties:
@@ -768,6 +801,19 @@ components:
         plateNumber: { type: string }
         type: { type: string, enum: [standard, premium, bike] }
         driverId: { type: string }
+
+    VehicleCreateRequest:
+      type: object
+      required: [plateNumber, type]
+      properties:
+        plateNumber: { type: string, minLength: 1, maxLength: 20 }
+        type: { type: string, enum: [standard, premium, bike] }
+
+    VehicleUpdateRequest:
+      type: object
+      properties:
+        plateNumber: { type: string, minLength: 1, maxLength: 20 }
+        type: { type: string, enum: [standard, premium, bike] }
 
     TripCreateRequest:
       type: object
@@ -779,6 +825,7 @@ components:
 
     Trip:
       type: object
+      required: [tripId, customerId, pickup, destination, status, createdAt]
       properties:
         tripId: { type: string }
         customerId: { type: string }
@@ -796,9 +843,9 @@ components:
         data:
           type: array
           items: { $ref: '#/components/schemas/Trip' }
-        total: { type: integer }
-        page: { type: integer }
-        limit: { type: integer }
+        total: { type: integer, minimum: 0 }
+        page: { type: integer, minimum: 1 }
+        limit: { type: integer, minimum: 1 }
 
     Fare:
       type: object
@@ -806,20 +853,28 @@ components:
         fareId: { type: string }
         tripId: { type: string }
         serviceType: { type: string }
-        amount: { type: number }
+        amount: { type: number, minimum: 0 }
 
     Payment:
       type: object
       properties:
         paymentId: { type: string }
         tripId: { type: string }
-        amount: { type: number }
+        amount: { type: number, minimum: 0 }
         method: { type: string, enum: [cash, card] }
         status: { type: string, enum: [pending, success, failed] }
         providerTransactionId: { type: string, nullable: true }
 
+    RatingCreateRequest:
+      type: object
+      required: [score]
+      properties:
+        score: { type: integer, minimum: 1, maximum: 5 }
+        comment: { type: string, maxLength: 1000, nullable: true }
+
     Rating:
       type: object
+      required: [ratingId, tripId, customerId, driverId, score]
       properties:
         ratingId: { type: string }
         tripId: { type: string }
