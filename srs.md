@@ -129,14 +129,14 @@ flowchart TB
 | BR29 | Mở rộng dịch vụ | Bổ sung loại dịch vụ đặt xe mới |
 | BR30 | Triển khai từng phần | Triển khai chức năng mới từng phần, hạn chế ảnh hưởng hệ thống |
 
-**Chuỗi yêu cầu quan trọng nhất:**
-`BR01 → BR03 → BR04 → BR05 → BR07 → (BR12 → BR13 → BR16) & BR18`
+**Chuỗi nghiệp vụ chính:** `BR01 → BR03 → BR04 → BR05 → BR07 → BR12 → BR13 → BR16 → BR18`
 
 ---
 
 ## 5. Actors & Use Cases
 
 **Actor chính:** Khách hàng, Tài xế, Nhân viên vận hành.
+
 **Hệ thống ngoài:** Payment Provider (xử lý thanh toán, trả kết quả, xử lý lỗi), Map/GPS Provider (vị trí, khoảng cách, ETA), Notification Provider (Push/SMS/Email).
 
 ### Khách hàng
@@ -147,8 +147,6 @@ UC12 Đăng ký · UC13 Cập nhật hồ sơ · UC14 Cập nhật phương ti�
 
 ### Nhân viên vận hành
 UC22 Quản lý khách hàng · UC23 Quản lý tài xế · UC24 Quản lý phương tiện · UC25 Quản lý chuyến đi · UC26 Giám sát chuyến đang diễn ra · UC27 Kiểm tra trạng thái tài xế · UC28 Xử lý sự cố · UC29 Tra cứu giao dịch · UC30 Xem báo cáo thống kê · UC31 Quản lý tài khoản & phân quyền
-
-*(Ví dụ chuyển đổi: Nhu cầu doanh nghiệp → BR01 → UC04 Tạo chuyến đi → Actor: Khách hàng → vẽ Use Case Diagram.)*
 
 ---
 
@@ -212,8 +210,6 @@ UC22 Quản lý khách hàng · UC23 Quản lý tài xế · UC24 Quản lý ph�
 | NFR09 | Khả năng tích hợp | Dễ tích hợp thêm Payment/Map/Notification Provider |
 | NFR10 | Mở rộng dịch vụ | Hỗ trợ dịch vụ và phương thức thanh toán mới |
 
-*Nhóm: Performance (NFR01) · Scalability (NFR02) · Availability & Reliability (NFR03–04) · Security (NFR05–07) · Maintainability (NFR08) · Integration & Extensibility (NFR09–10)*
-
 ---
 
 ## 9. Entities
@@ -242,6 +238,8 @@ Trip 1─1 Fare   Trip 1─1 Payment   Trip 1─1 Rating   Driver 1─N Location
 UserAccount 1─N AuditLog
 ```
 
+> Lưu ý: `Password` chỉ là thuộc tính logic của tài khoản; hệ thống không được lưu mật khẩu dạng plaintext.
+
 ---
 
 ## 10. Acceptance Criteria (AC)
@@ -251,8 +249,10 @@ UserAccount 1─N AuditLog
 | AC01 | Nhập đủ điểm đón, điểm đến, loại xe → cho tạo yêu cầu | FR01 |
 | AC02 | Thiếu điểm đón/đến → báo lỗi, không cho tạo yêu cầu | FR01 |
 | AC03 | Phải chọn loại xe hợp lệ trước khi tạo yêu cầu | FR01 |
-| AC04 | Tạo thành công → hiển thị thông tin chuyến, trạng thái "đang tìm tài xế" | FR02 |
+| AC04 | Tạo thành công → hiển thị thông tin chuyến, trạng thái "finding_driver" | FR02 |
 | AC05 | Tài xế từ chối → tự động chuyển sang tài xế phù hợp tiếp theo, không cần khách đặt lại | FR05 |
+
+> Bộ AC hiện tại mới bao phủ một phần FR. Khi hoàn thiện toàn bộ yêu cầu, cần bổ sung AC cho FR06–FR17 để ma trận truy vết đầy đủ.
 
 ---
 
@@ -260,20 +260,23 @@ UserAccount 1─N AuditLog
 
 | BR | FR | AC | UC | Test |
 |---|---|---|---|---|
-| BR01 Đặt xe | FR01 Nhập thông tin chuyến | AC01 Đủ thông tin → tạo chuyến | UC04 Tạo chuyến | TC01 Kiểm tra tạo chuyến |
-| BR01 Đặt xe | FR01 Nhập thông tin chuyến | AC02 Thiếu điểm đón → chặn tạo chuyến | UC04 Tạo chuyến | TC02 Kiểm tra thiếu điểm đón |
-| BR01 Đặt xe | FR01 Nhập thông tin chuyến | AC03 Thiếu loại xe → chặn tạo chuyến | UC04 Tạo chuyến | TC03 Kiểm tra thiếu loại xe |
+| BR01 Đặt xe | FR01 Nhập thông tin chuyến | AC01 Đủ thông tin → tạo chuyến | UC04 Tạo chuyến | TC-TRIP-001 |
+| BR01 Đặt xe | FR01 Nhập thông tin chuyến | AC02 Thiếu điểm đón/đến → chặn tạo chuyến | UC04 Tạo chuyến | TC-TRIP-002 / TC-TRIP-003 |
+| BR01 Đặt xe | FR01 Nhập thông tin chuyến | AC03 Thiếu loại xe → chặn tạo chuyến | UC04 Tạo chuyến | TC-TRIP-004 |
+| BR01 Đặt xe | FR02 Tạo yêu cầu đặt xe | AC04 Tạo thành công → trạng thái finding_driver | UC04 Tạo chuyến | TC-TRIP-001 |
+| BR05 Từ chối/không phản hồi | FR05 Tìm tài xế khác | AC05 Tài xế từ chối → tìm tài xế khác | UC18 Từ chối chuyến | TC-ASSIGN-002 / TC-ASSIGN-003 |
 
-*(Cần bổ sung đủ hàng cho các FR còn lại theo cùng mẫu.)*
+> Ma trận trên là phần truy vết đã được chuẩn hóa từ các tài liệu hiện có. Các FR06–FR17 cần được bổ sung test case tương ứng khi hoàn thiện bộ kiểm thử.
 
 ### Ví dụ test case – Đăng nhập
-- **Username:** đúng · sai · trống · không tồn tại · sai định dạng
-- **Password:** đúng · sai · trống · sai định dạng · quá dài/ngắn
+- **Số điện thoại:** đúng · sai · trống · không tồn tại · sai định dạng
+- **Mật khẩu:** đúng · sai · trống · sai định dạng · quá dài/ngắn
 
 ---
 
-## Luồng phân tích tổng quát
-```
+## 12. Luồng phân tích tổng quát
+
+```text
 Business Goal → Business Requirement (BR) → Use Case (UC) → Actor
 Business Rule → Functional Requirement (FR) → Use Case (UC)
 Use Case → Entity → thuộc tính/quan hệ → ERD
